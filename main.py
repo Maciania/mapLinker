@@ -10,9 +10,6 @@ from tkinter import scrolledtext
 import SinLib
 from map import *
 from omx import *
-from PIL import Image,ImageTk
-
-
 
 
 class MapLinker(Frame):
@@ -95,7 +92,6 @@ class MapLinker(Frame):
 
         self.btn_link = Button(self.row6, text='Связать несвязанное', command=self.start_linking)
         self.btn_link.pack(side=RIGHT, padx=2, pady=5)
-
 
     # Выбор OMX файла
     def select_omx_file(self):
@@ -212,9 +208,9 @@ class MapLinker(Frame):
                         linkink_object = SinLib.PID(self.get_node_path(i), self.get_node_id(i))
 
                     for j in range(linkink_object.loopCnt()):
-                        xmlObj = self.myMap.create_XMLtag(linkink_object[j][0], linkink_object[j][1])  # создаем объект тега
+                        xmlObj = self.myMap.create_XMLtag(linkink_object[j][0],
+                                                          linkink_object[j][1])  # создаем объект тега
                         self.myMap.insert_XML_to_map(xmlObj)  # вставляем объект в карту
-
 
         self.btn_link['text'] = 'Связать несвязанное'
         self.header_r3['text'] = ''
@@ -252,7 +248,6 @@ class MapLinker(Frame):
 
         return node_id
 
-
     def test_func(self):
         print(self.myOmx.get_Obj_library_type('di'))
 
@@ -264,4 +259,3 @@ if __name__ == '__main__':
     root.geometry("500x380")
     app = MapLinker()
     root.mainloop()
-
