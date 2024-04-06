@@ -3,3 +3,6 @@
 /exe_version/
 *.ico
 *.spec
+*.xml
+*.png
+*.omx
