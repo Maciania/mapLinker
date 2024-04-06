@@ -1,3 +1,5 @@
 /venv/
 /.idea/
 /exe_version/
+*.ico
+*.spec
