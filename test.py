@@ -45,7 +45,7 @@ import xml.etree.ElementTree as ET
 
 
 # создаем свой объект (первый вариант создания XML струтктуры)
-
+"""
 newObj = ET.Element('item', Binding='TestBinding')
 # ET.indent(newObj, space='   ', level=0)
 ET.indent(newObj, space='   ', level=0)
@@ -111,3 +111,27 @@ ET.dump(test)
 testTree.write('test.xml')
 
 # ET.dump(test)
+"""
+
+# Парсинг OMX файла проекта
+tree = ET.parse('Li.omx')
+omx = ET.parse('Li.omx').getroot()
+# ET.dump(tree)
+
+# Вывод всех папок в IosApp
+AstraRegul = omx.find('{automation.deployment}domain')
+IosApp = AstraRegul.find('{automation.deployment}application-object')
+
+myLst = [logicObj.get('name') for logicObj in IosApp]
+print(myLst)
+# for logicObj in IosApp:
+#     print(logicObj.get('name'), type(logicObj.get('name')))
+
+for logicObj in IosApp:
+    if logicObj.get('name') == 'SinLib':
+        for obj in logicObj:
+            ET.dump(obj)
+            print(obj.get('name'))  # Получение списка имен объектов в AstraRegul =>  IOS_App => SinLib
+
+
+# ET.dump(omx)

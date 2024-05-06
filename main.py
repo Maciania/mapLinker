@@ -17,12 +17,14 @@ class MapLinker(Frame):
     def __init__(self):
         super().__init__()
 
+        self.iosAppObj = ["1", "2", "3"]
+
         self.myMap = None  # Экземпляр класса для карты
         self.myOmx = None  # Экземпляр класса для OMX файла
 
         self.master.title("Map Linker XML")
         self.pack(fill=BOTH, expand=True)
-
+        # Строка №1
         self.row1 = Frame(self)
         self.row1.pack(fill=X)
 
@@ -35,6 +37,7 @@ class MapLinker(Frame):
         self.entry_omx_path = Entry(self.row1)
         self.entry_omx_path.pack(fill=X, padx=2, expand=True)
 
+        # Строка №2
         self.row2 = Frame(self)
         self.row2.pack(fill=X)
 
@@ -47,6 +50,24 @@ class MapLinker(Frame):
         self.entry_map_path = Entry(self.row2)
         self.entry_map_path.pack(fill=X, padx=2, expand=True)
 
+        # Строка №3
+        self.row3 = Frame(self)
+        self.row3.pack(fill=X)
+
+        self.header_r3 = Label(self.row3, text="Список объектов в IosApp", width=24)
+        self.header_r3.pack(side=LEFT, padx=2, pady=5)
+
+        self.cbIosApp = ttk.Combobox(self.row3, values=self.iosAppObj, width=20)
+        self.cbIosApp.bind("<<ComboboxSelected>>", self.selected_iosApp)
+        self.cbIosApp.pack(side=LEFT, padx=2, pady=5)
+
+        self.cbTypes = ttk.Combobox(self.row3, width=20)
+        self.cbTypes.pack(side=RIGHT, padx=2, pady=5)
+
+        self.header_types_r3 = Label(self.row3, text="Тип")
+        self.header_types_r3.pack(side=RIGHT, padx=2, pady=5)
+
+        # Читай между строк. Текстовое поля для логов
         self.st_omx_obj = scrolledtext.ScrolledText(self,
                                                     wrap=tk.WORD,
                                                     # width=40,
@@ -59,6 +80,7 @@ class MapLinker(Frame):
         self.header_r3 = Label(self, text="", width=18)
         self.header_r3.pack(fill=X, padx=2, pady=2, expand=True)
 
+        # Строка №4
         self.row4 = Frame(self)
         self.row4.pack(fill=X)
 
@@ -70,6 +92,7 @@ class MapLinker(Frame):
         self.entry_node_path.bind('<Return>', self.connect_node_path)
         self.entry_node_path['state'] = 'disabled'
 
+        # Строка №5
         self.row5 = Frame(self)
         self.row5.pack(fill=X)
 
@@ -81,6 +104,7 @@ class MapLinker(Frame):
         self.entry_node_id.bind('<Return>', self.connect_node_id)
         self.entry_node_id['state'] = 'disabled'
 
+        # Строка №6
         self.row6 = Frame(self)
         self.row6.pack(fill=X)
 
@@ -92,6 +116,9 @@ class MapLinker(Frame):
 
         self.btn_link = Button(self.row6, text='Связать несвязанное', command=self.start_linking)
         self.btn_link.pack(side=RIGHT, padx=2, pady=5)
+
+        self.btn_insert_to_cb = Button(self.row6, text='Показать объекты', command=self.get_obj_in_iosApp)
+        self.btn_insert_to_cb.pack(side=RIGHT, padx=2, pady=5)
 
     # Выбор OMX файла
     def select_omx_file(self):
@@ -248,14 +275,19 @@ class MapLinker(Frame):
 
         return node_id
 
-    def test_func(self):
-        print(self.myOmx.get_Obj_library_type('di'))
+    # Заполняем комбобокс сущетсвующими папками с типами (AI, DI и т.д.)
+    def selected_iosApp(self, event):
+        self.cbTypes['values'] = self.myOmx.get_types_in_iosApp(self.cbIosApp.get())
+
+    # Заполняем комбобокс объектами из IosApp
+    def get_obj_in_iosApp(self):
+        self.cbIosApp['values'] = self.myOmx.get_objects_iosApp()
 
 
 if __name__ == '__main__':
     root = Tk()
     node_path_tag = tk.StringVar()  # тег ПЛК
     node_id_tag = tk.StringVar()  # тег ПЛК
-    root.geometry("500x380")
+    root.geometry("500x410")
     app = MapLinker()
     root.mainloop()
