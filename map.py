@@ -26,7 +26,13 @@ class MapFile:
             node_path = child.find('node-path').text
             if node_path.find('SinLib') != -1 and node_path.find(objName) != -1:
                 return True  # Есть привязка
+        return False  # Нет привязки
 
+    def checkLink(self, obj, type, objName):
+        for child in self.file.findall('item'):
+            node_path = child.find('node-path').text
+            if node_path.find(obj) != -1 and node_path.find(type) != -1 and node_path.find(objName) != -1:
+                return True  # Есть привязка
         return False  # Нет привязки
 
 

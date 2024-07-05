@@ -75,11 +75,69 @@ class OmxFile:
     def get_objects_iosApp(self):
         return [logicObj.get('name') for logicObj in self.IosApp]
 
-
     # Список типов (AI, DI, VLVA и т.д.) внутри объекта (SDM, NS1, NOR и т.д.)
     def get_types_in_iosApp(self, iosAppObj):
         for logicObj in self.IosApp:
             if logicObj.get('name') == iosAppObj:
                 return [obj.get('name') for obj in logicObj]
+
+        return None
+
+    # Список названий объектов по пути iosAppObj (SDM, UKL, UPOV) -> iosAppObjType (DI, AI)
+    def get_objName(self, iosAppObj, iosAppObjType):
+        for logicObj in self.IosApp:
+            if logicObj.get('name') == iosAppObj:
+                for typesObj in logicObj:
+                    if typesObj.get('name') == iosAppObjType:
+                        return [obj.get('name') for obj in typesObj]
+
+        return None
+
+    # Вернуть базовый библиотечный тип этого объекта
+    # iosAppObj - папка принадлежащая объекту
+    # iosAppObjType - папка с типом объектов
+    def get_base_type(self, iosAppObj, iosAppObjType, obj_name):
+        for logicObj in self.IosApp:
+            if logicObj.get('name') == iosAppObj:
+                for typesObj in logicObj:
+                    if typesObj.get('name') == iosAppObjType:
+                        for obj in typesObj:
+                            if obj.get('name') == obj_name:
+                                return obj.get('base-type').split('.')[-2]
+
+        return None
+
+    # Вернуть название библиотеки экземпляром которой является этот объект
+    def get_lib_name(self, iosAppObj, iosAppObjType, obj_name):
+        for logicObj in self.IosApp:
+            if logicObj.get('name') == iosAppObj:
+                for typesObj in logicObj:
+                    if typesObj.get('name') == iosAppObjType:
+                        for obj in typesObj:
+                            if obj.get('name') == obj_name:
+                                return obj.get('base-type').split('.')[-4]
+
+    # Получить путь объекта по имени в директории
+    def get_node_path(self, iosAppObj, iosAppObjType, obj_name):
+        for logicObj in self.IosApp:
+            if logicObj.get('name') == iosAppObj:
+                for typesObj in logicObj:
+                    if typesObj.get('name') == iosAppObjType:
+                        for obj in typesObj:
+                            if obj.get('name') == obj_name:
+                                return '.'.join(obj.get('original').split('.')[
+                                                3:])  # Возвращаем путь после 'REGUL_R500_51_1_A', 'Runtime', 'SDM_app'
+
+        return None
+
+    # Получить путь объекта по имени в директории
+    def get_node_id(self, iosAppObj, iosAppObjType, obj_name):
+        for logicObj in self.IosApp:
+            if logicObj.get('name') == iosAppObj:
+                for typesObj in logicObj:
+                    if typesObj.get('name') == iosAppObjType:
+                        for obj in typesObj:
+                            if obj.get('name') == obj_name:
+                                return obj.get('original').split('.')[-1]
 
         return None

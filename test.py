@@ -1,4 +1,11 @@
 import xml.etree.ElementTree as ET
+import xml.etree.ElementTree as ET
+import tkinter as tk
+from tkinter import ttk
+from tkinter import filedialog as fd
+from tkinter.messagebox import showinfo
+from tkinter import Tk, Text, BOTH, X, N, LEFT, RIGHT, END
+from tkinter.ttk import Frame, Label, Entry, Button
 
 # Парсинг карты адресов
 # tree = ET.parse('SDM_app_map.xml')
@@ -29,11 +36,11 @@ import xml.etree.ElementTree as ET
 #         for obj in logicObj:
 #             print(obj.get('name'))  # Получение списка имен объектов в AstraRegul =>  IOS_App => SinLib
 
-    # for i in child.findall('{automation.deployment}application-object'):
-    #     name2 = i.find('{http://people.example.com}name')
-    #     name = i.get('name')
-    #     print(name)
-    # print("1")
+# for i in child.findall('{automation.deployment}application-object'):
+#     name2 = i.find('{http://people.example.com}name')
+#     name = i.get('name')
+#     print(name)
+# print("1")
 
 #
 # for child in root:
@@ -111,7 +118,7 @@ ET.dump(test)
 testTree.write('test.xml')
 
 # ET.dump(test)
-"""
+
 
 # Парсинг OMX файла проекта
 tree = ET.parse('Li.omx')
@@ -135,3 +142,125 @@ for logicObj in IosApp:
 
 
 # ET.dump(omx)
+
+"""
+
+root = tk.Tk()
+root.title('Login')
+root.geometry("400x300")
+
+
+class MyFileDialog(Frame):
+    """Класс с контейнером из трех элементов для выбора файла из директории проекта
+    Используется для выбора файла проекта *omx и файла карты в который добавляются привязки"""
+
+    def __init__(self, labelTxt, btnTxt, cmd, master=None):
+        super().__init__(master)
+        self.__init(labelTxt, btnTxt, cmd)
+
+    def __init(self, labelTxt, btnTxt, cmd):
+        self.label = Label(self, text=labelTxt)
+        self.entry = Entry(self)
+        self.btn = Button(self, text=btnTxt, command=cmd)
+        self.__packing()
+
+    def __packing(self):
+        self.label.pack(side="left", padx=10)
+        self.entry.pack(side="left", expand=True, fill=X)
+        self.btn.pack(side="left", padx=10)
+
+
+class MyComboBox(Frame):
+    """Класс с контейнером из двух элементов для выбора поля из комбобокса
+    Используется для выбора объектов внутри проекта"""
+
+    def __init__(self, labelTxt, bindCombo, master=None):
+        super().__init__(master)
+        self.__init(labelTxt, bindCombo)
+
+    def __init(self, labelTxt, bindCombo):
+        self.label = Label(self, text=labelTxt)
+        self.combo = ttk.Combobox(self)
+        if bindCombo is not None:
+            self.combo.bind("<<ComboboxSelected>>", bindCombo)
+        self.__packing()
+
+    def __packing(self):
+        self.label.pack(side="left", padx=10)
+        self.combo.pack(side="left", expand=True, fill=X)
+
+
+class MyLabelFrame(Frame):
+    """Класс с контейнером из двух элементов для вывода объектов участвующих в подвязке
+    Используется для вывода node_path и node_id"""
+
+    def __init__(self, labelTxt, bindEntry, master=None):
+        super().__init__(master)
+        self.__init(labelTxt, bindEntry)
+
+    def __init(self, labelTxt, bindEntry):
+        self.label = Label(self, text=labelTxt)
+        self.entry = Entry(self, state='disabled')
+        if bindEntry is not None:
+            self.entry.bind("<Return>", bindEntry)
+        self.__packing()
+
+    def __packing(self):
+        self.label.pack(side="left", padx=10)
+        self.entry.pack(side="left", expand=True, fill=X)
+
+    def setNewTxt(self, newText):
+        self.entry.configure(state='normal')
+        self.entry.delete(0, END)
+        self.entry.insert(tk.INSERT, newText)
+        self.entry.configure(state='disabled')
+
+
+class ControlField(Frame):
+    """Класс с контейнером из неограниченного кол-ва кнопок
+    Используется для управления процессом подвязки
+    В качестве входный аргументов используются кортежи из двух элементов - название кнопки и ее команда """
+
+    def __init__(self, *args, master=None):
+        super().__init__(master)
+        self.__init(*args)
+
+    def __init(self, *args):
+        self.btnLst = [Button(self, text=btn[0], command=btn[1]) for btn in args]
+        self.__packing()
+
+    def __packing(self):
+        for btn in self.btnLst:
+            btn.pack(side="left", padx=10, expand=True, fill=X)
+
+
+def myPrint(*args):
+    print('hello? max')
+
+
+# print(myField(Label(text="Файл проекта OMX", width=18), Button(text='Открыть'), Entry()).__dict__)
+# fields = {}
+#
+# fields['username_label'] = ttk.Label(text='Username:')
+# fields['username'] = ttk.Entry()
+#
+# fields['password_label'] = ttk.Label(text='Password:')
+# fields['password'] = ttk.Entry(show="*")
+#
+# fields['test'] = myFileDialog('hello', 'max')
+#
+# for field in fields.values():
+#     field.pack(anchor=tk.W, padx=10, pady=5, fill=tk.X)
+#
+# ttk.Button(text='Login').pack(anchor=tk.W, padx=10, pady=5)
+#
+
+MyFileDialog('Файл проекта OMX :', 'Открыть', cmd=myPrint).pack(anchor=tk.W, padx=10, pady=5, fill=tk.X)
+MyFileDialog('Файл карты :', 'Открыть', cmd=myPrint).pack(anchor=tk.W, padx=10, pady=5, fill=tk.X)
+MyComboBox('Выбор1 :', bindCombo=myPrint).pack(anchor=tk.W, padx=10, pady=5, fill=tk.X)
+MyComboBox('Выбор2 :', bindCombo=myPrint).pack(anchor=tk.W, padx=10, pady=5, fill=tk.X)
+MyLabelFrame('NodePath :', bindEntry=myPrint).pack(anchor=tk.W, padx=10, pady=5, fill=tk.X)
+MyLabelFrame('NodeId :', bindEntry=myPrint).pack(anchor=tk.W, padx=10, pady=5, fill=tk.X)
+ControlField(('Раз', myPrint), ('Два', myPrint), ('Три', myPrint), ('Четыре', myPrint)).pack(anchor=tk.W, padx=10,
+                                                                                             pady=5, fill=tk.X)
+root.mainloop()
