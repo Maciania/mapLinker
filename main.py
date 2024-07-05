@@ -394,6 +394,9 @@ class MapLinker(Frame):
             self.fields['table'].insert(cnt, i, self.myOmx.get_base_type(iosApp, iosAppType, i), self.myOmx.get_lib_name(iosApp, iosAppType, i), None)
 
 
+    # Добавляем новую фичу для HELP здесь
+
+
 if __name__ == '__main__':
     root = Tk()
     node_path_tag = tk.StringVar()  # тег ПЛК
