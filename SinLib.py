@@ -189,3 +189,17 @@ class AI(BaseObj):
             [f'{self.node_path}.BAD_TYPE', f'Application.{self.node_id}.sAI.BadType'],
             [f'{self.node_path}.BAD_VALUE', f'Application.{self.node_id}.sAI.BadValue']
         ]
+
+
+class FC_CTRL(BaseObj):
+    def __init__(self, node_path, node_id):
+        super().__init__(node_path, node_id)
+        self.tag_lst = [
+            [f'{self.node_path}.HMI_CMD', f'Application.{self.node_id}.sFC.HmiCmd'],
+            [f'{self.node_path}.STATE', f'Application.{self.node_id}.sFC.State'],
+            [f'{self.node_path}.IMIT', f'Application.{self.node_id}.sFC.Imit'],
+            [f'{self.node_path}.SP_FREQ', f'Application.{self.node_id}.sFC.SpFreq'],
+            [f'{self.node_path}.FREQ', f'Application.{self.node_id}.sFC.PvFreq'],
+            [f'{self.node_path}.CURRENT', f'Application.{self.node_id}.sFC.fcPvCurr'],
+            [f'{self.node_path}.ERR_CODE', f'Application.{self.node_id}.sFC.ErrCode']
+        ]
