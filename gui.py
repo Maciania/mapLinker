@@ -11,20 +11,24 @@ class MyFileDialog(Frame):
     """Класс с контейнером из трех элементов для выбора файла из директории проекта
     Используется для выбора файла проекта *omx и файла карты в который добавляются привязки"""
 
-    def __init__(self, labelTxt: str, btnTxt: str, cmd, master=None):
+    def __init__(self, labelTxt: str, btnTxt: str, cmd, help_title: str,  help_label: str, master=None):
         super().__init__(master)
-        self.__init(labelTxt, btnTxt, cmd)
+        self.__init(labelTxt, btnTxt, cmd, help_label, help_title)
 
-    def __init(self, labelTxt, btnTxt, cmd):
+    def __init(self, labelTxt, btnTxt, cmd, help_label, help_title):
         self.label = Label(self, text=labelTxt)
         self.entry = Entry(self, state='disabled')
         self.btn = Button(self, text=btnTxt, command=cmd)
+        self.help_btn = Button(self, text='?', command=self.open_help_window, width=2)
+        self.help_title = help_title
+        self.help_label = help_label
         self.__packing()
 
     def __packing(self):
         self.label.pack(side="left", padx=10)
         self.entry.pack(side="left", expand=True, fill=X)
-        self.btn.pack(side="left", padx=10)
+        self.btn.pack(side="left", padx=3)
+        self.help_btn.pack(side="left", padx=0)
 
     def setNewTxt(self, newText):
         self.entry.configure(state='normal')
@@ -35,25 +39,32 @@ class MyFileDialog(Frame):
     def getText(self):
         return self.entry.get()
 
+    def open_help_window(self):
+        HelpWindow(self.help_title, self.help_label, self.help_btn.winfo_rootx(), self.help_btn.winfo_rooty())
+
 
 class MyComboBox(Frame):
     """Класс с контейнером из двух элементов для выбора поля из комбобокса
     Используется для выбора объектов внутри проекта"""
 
-    def __init__(self, labelTxt, bindCombo, master=None):
+    def __init__(self, labelTxt, bindCombo, help_title: str,  help_label: str, master=None):
         super().__init__(master)
-        self.__init(labelTxt, bindCombo)
+        self.__init(labelTxt, bindCombo, help_title,  help_label)
 
-    def __init(self, labelTxt, bindCombo):
+    def __init(self, labelTxt, bindCombo,  help_title,  help_label):
+        self.help_title = help_title
+        self.help_label = help_label
         self.label = Label(self, text=labelTxt)
         self.combo = ttk.Combobox(self)
+        self.help_btn = Button(self, text='?', command=self.open_help_window, width=2)
         if bindCombo is not None:
             self.combo.bind("<<ComboboxSelected>>", bindCombo)
         self.__packing()
 
     def __packing(self):
         self.label.pack(side="left", padx=10)
-        self.combo.pack(side="left", expand=True, fill=X)
+        self.combo.pack(side="left", expand=True, fill=X, padx=3)
+        self.help_btn.pack(side="left", padx=0)
 
     def setValues(self, values):
         self.combo['values'] = values
@@ -61,6 +72,9 @@ class MyComboBox(Frame):
 
     def getValue(self):
         return self.combo.get()
+
+    def open_help_window(self):
+        HelpWindow(self.help_title, self.help_label, self.help_btn.winfo_rootx(), self.help_btn.winfo_rooty())
 
 
 class MyLabelFrame(Frame):
@@ -184,7 +198,7 @@ class MyTable(Frame):
 
     def __packing(self):
         self.tree.pack(side="left", padx=10, expand=True, fill=X)
-        self.ysb.pack(side="left",  fill=BOTH)
+        self.ysb.pack(side="left", fill=BOTH)
 
     def insert(self, obj_id, obj_name: str, obj_type: str, base_type: str, con_status: str):
         self.tree.insert("", END, values=(obj_id, obj_name, obj_type, base_type, con_status))
@@ -192,3 +206,21 @@ class MyTable(Frame):
     def clear(self):
         for i in self.tree.get_children():
             self.tree.delete(i)
+
+
+class HelpWindow(Frame):
+    """Окно подсказок"""
+
+    def __init__(self, title: str, labelTxt: str, btn_x, btn_y, master=None):
+        super().__init__(master)
+        self.__init(title, labelTxt, btn_x, btn_y)
+
+    def __init(self,title, labelTxt, btn_x, btn_y):
+        self.window = tk.Toplevel(self)
+        self.window.wm_title(title)
+        self.window.geometry("%dx%d+%d+%d" % (600, 100, btn_x - 600, btn_y + 20))
+        self.label = Label(self.window, text=labelTxt)
+        self.__packing()
+
+    def __packing(self):
+        self.label.pack(side="top", fill="both", expand=True, padx=0, pady=0)

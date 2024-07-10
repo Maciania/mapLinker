@@ -22,12 +22,47 @@ class MapLinker(Frame):
         self.myOmx = None  # Экземпляр класса для OMX файла
         self.master.title("Map Linker XML")
 
+        # Описание окон help
+        self.help_info = {
+            'omx': ['Помощь по omx',
+                    'Файл проекта с расширением .omx\n'
+                    'Файл находится в директории проекта по пути: \AS\Li\n'
+                    'Утилиту нужно поместить по пути \AS\Li и при открытии появится файл с раширением .omx'],
+
+            'map': ['Помощь по карте подвязок',
+                    'Файл карты подвязок с расширением .xml\n'
+                    'Файл находится в директории проекта по пути: \AS\Li\n'
+                    'Утилиту нужно поместить по пути \AS\Li и при открытии появится файл с раширением .omx\n'
+                    'Правильно будет использовать утилиту на тестовом проекте, а затем через экспорт в AStudio\n'
+                    'выгрузить подвязки в xls формате и импортировать их в боевой проект, но можно и рискнуть'],
+
+            'iosObj': ['Помощь по выбору участка (ЛСУ) в IOS_APP',
+                       'Выбор папки с объектами для подвязки с определенной структурой\n'
+                       '1 уровень - Название участка (SDM, UKL, NSPT и т.д.)\n'
+                       '2 уровень - Тип объектов (AI, DI, MTR и т.д.)\n'
+                       '3 уровень - Объекты \n'
+                       'Обязательно создавать объекты в AStudio в IOS_APP именно в такой структуре!!!'],
+
+            'iosType': ['Помощь по выбору типов в IOS_APP',
+                        'Выбор папки с типом подвязываемого объекта внтури папки с названием участка\n'
+                        'Используются следующие названия:\n'
+                        'AI, DI, MTR, PID, VLVD, VLVA\n'
+                        'Обязательно создавать папки AStudio в IOS_APP именно с такими наименованиями!!!']
+
+        }
+
         # Заменяем все что ниже на объекты
         self.fields = {
-            'omx': MyFileDialog('Файл проекта OMX :', 'Открыть', cmd=self.select_omx_file),
-            'map': MyFileDialog('Файл карты :', 'Открыть', cmd=self.select_map_file),
-            'iosObj': MyComboBox('Список объектов в IosApp :', bindCombo=self.selected_iosApp),
-            'iosType': MyComboBox('Тип :', bindCombo=None),
+            'omx': MyFileDialog('Файл проекта OMX :', 'Открыть', cmd=self.select_omx_file,
+                                help_title=self.help_info.get('omx')[0], help_label=self.help_info.get('omx')[1]),
+            'map': MyFileDialog('Файл карты :', 'Открыть', cmd=self.select_map_file,
+                                help_title=self.help_info.get('map')[0], help_label=self.help_info.get('map')[1]),
+            'iosObj': MyComboBox('Список объектов в IosApp :', bindCombo=self.selected_iosApp,
+                                 help_title=self.help_info.get('iosObj')[0],
+                                 help_label=self.help_info.get('iosObj')[1]),
+            'iosType': MyComboBox('Тип :', bindCombo=None,
+                                  help_title=self.help_info.get('iosType')[0],
+                                  help_label=self.help_info.get('iosType')[1]),
             'table': MyTable(),
             'log': MyScrollText(),
             'nodePath': MyLabelFrame('NodePath :', bindEntry=self.connect_node_path),
@@ -38,7 +73,6 @@ class MapLinker(Frame):
                 ('Связать несвязанное', self.start_linking)
             )
         }
-
         self.__packing()
         """
         # Строка №1
@@ -156,7 +190,6 @@ class MapLinker(Frame):
         # if self.fields['omx'].getText() is not None:
         self.get_obj_in_iosApp()
 
-
     # Получаем список объектов в директории SinLib
     # def get_object_from_SinLib(self):
     #     if isinstance(self.myOmx, OmxFile):
@@ -234,7 +267,6 @@ class MapLinker(Frame):
                                         self.myOmx.get_lib_name(iosApp, iosAppType, i),
                                         self.myMap.checkLink(iosApp, iosAppType, i))
 
-
     # сохранить тег в файл
     def save_map(self):
         self.myMap.write_XML_to_map()
@@ -270,10 +302,12 @@ class MapLinker(Frame):
                 if self.myOmx.get_lib_name(iosApp, iosAppType, i) == 'SineticLib':
 
                     if iosAppType == 'AI' or iosAppType == 'AI1':
-                        linkink_object = SinLib.AI(self.get_node_path(iosApp, iosAppType, i), self.get_node_id(iosApp, iosAppType, i))
+                        linkink_object = SinLib.AI(self.get_node_path(iosApp, iosAppType, i),
+                                                   self.get_node_id(iosApp, iosAppType, i))
 
                     if iosAppType == 'FC_CTRL':
-                        linkink_object = SinLib.FC_CTRL(self.get_node_path(iosApp, iosAppType, i), self.get_node_id(iosApp, iosAppType, i))
+                        linkink_object = SinLib.FC_CTRL(self.get_node_path(iosApp, iosAppType, i),
+                                                        self.get_node_id(iosApp, iosAppType, i))
 
                     for j in range(linkink_object.loopCnt()):
                         xmlObj = self.myMap.create_XMLtag(linkink_object[j][0],
@@ -379,7 +413,6 @@ class MapLinker(Frame):
             self.fields['iosObj'].setValues(self.myOmx.get_objects_iosApp())
             self.selected_iosApp(0)
 
-
     # Получить список объектов внутри папки
     def get_obj(self):
         iosApp = self.fields['iosObj'].getValue()
@@ -391,10 +424,8 @@ class MapLinker(Frame):
             self.fields['log'].setNewTxt(f'{cnt}.Имя: {i:<10} Тип: {self.myOmx.get_base_type(iosApp, iosAppType, i)} '
                                          f'Библиотека: {self.myOmx.get_lib_name(iosApp, iosAppType, i)}')
 
-            self.fields['table'].insert(cnt, i, self.myOmx.get_base_type(iosApp, iosAppType, i), self.myOmx.get_lib_name(iosApp, iosAppType, i), None)
-
-
-    # Добавляем новую фичу для HELP здесь
+            self.fields['table'].insert(cnt, i, self.myOmx.get_base_type(iosApp, iosAppType, i),
+                                        self.myOmx.get_lib_name(iosApp, iosAppType, i), None)
 
 
 if __name__ == '__main__':
@@ -404,4 +435,4 @@ if __name__ == '__main__':
     root.geometry("640x510")
     app = MapLinker()
     root.mainloop()
-    #HelloMax2
+    # HelloMax2
